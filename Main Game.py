@@ -3,7 +3,7 @@ from random import *
 from math import trunc
 
 list_of_names = ["Evil Cat", " Sneaky Mouse", "Mad Rat", "Flying Hat", "Mean Bumblebee", "Slow Slug", "Slimy Snail",
-                 "Traffic Cone", "Tall Walrus", "Wiggly Noodles"]
+                 "Traffic Cone", "Tall Walrus", "Wiggly Noodles", "Angry Waffle"]
 player = ""
 enemy = ""
 LENGTH_OF_SCREEN = 40
@@ -18,6 +18,7 @@ class Monster():
         self.defense = level + randint(0, level)
         self.health = level + randint(0, level)
         self.max_health = self.health
+        self.speed = level + randint(0, level)
         self.exp = level + randint(0, level)
         self.gold = level + randint(0, level)
 
@@ -36,7 +37,8 @@ class Player():
         self.attack = level + 1
         self.defense = level + 1
         self.health = level + 1
-        self.max_health = level + 1
+        self.max_health = self.health
+        self.speed = level + 1
         self.exp = 0
         self.gold = 0
         self.max_exp = level
@@ -132,6 +134,53 @@ def get_stats():
     input()
 
 
+def attack_main():
+    if player.speed > enemy.speed:  # Player is faster
+        player.attack_enemy(enemy)
+        if check_death() is 'enemy':  # .                        Enemy dies
+            player_win()  # Win Screen
+            gain_exp(enemy.level)  # EXP Gain
+            game_state_outer = 2
+            player.health = player.max_health  # Reset Health
+        elif check_death() is 'none':  # .                        No one dies
+            enemy.attack_player(player)
+            if check_death() is 'player':  # .                             Player dies
+                enemy_win()
+                game_state_outer = 2
+                player.health = player.max_health
+            elif check_death() is "enemy":  # .                            Enemy dies
+                player_win()  # Win Screen
+                gain_exp(enemy.level)  # EXP Gain
+                game_state_outer = 2
+                player.health = player.max_health  # Reset Health
+        elif check_death() is 'player':  # .                      Player dies
+            enemy_win()
+            game_state_outer = 2
+            player.health = player.max_health
+    elif player.speed < enemy.speed:
+        enemy.attack_player(player)
+        if check_death() is 'player':
+            enemy_win()
+            game_state_outer = 2
+            player.health = player.max_health
+        elif check_death() is 'none':
+            player.attack_enemy(enemy)
+            if check_death() is 'enemy':
+                player_win()  # Win Screen
+                gain_exp(enemy.level)  # EXP Gain
+                game_state_outer = 2
+                player.health = player.max_health  # Reset Health
+            elif check_death() is 'player':
+                enemy_win()
+                game_state_outer = 2
+                player.health = player.max_health
+        elif check_death() is 'enemy':
+            player_win()  # Win Screen
+            gain_exp(enemy.level)  # EXP Gain
+            game_state_outer = 2
+            player.health = player.max_health  # Reset Health
+
+
 def show_menu(game_state):
     while True:
         spaces_in_between = LENGTH_OF_SCREEN - 2
@@ -165,7 +214,15 @@ def show_menu(game_state):
             print("|" + " " * spaces_in_between + "|")
             print("|  "+" "*num_p_spaces2+str(player.name)+" "*num_p_spaces+"     "+" "*num_e_spaces+str(enemy.name)+" "*num_e_spaces2+"   |")
             print("|     /"+" "*p_remaining+"|"*p_health+"\    /"+"|"*e_health+" "*e_remaining+"\     |")
-            print("| "+p_hp_percent+"% )"+" "*p_remaining+"|"*p_health+"( vs )"+"|"*e_health+" "*e_remaining+"( "+e_hp_percent+"% |")
+            if p_hp_percent == '100':
+                if e_hp_percent == '100':
+                    print("| 100%)"+" "*p_remaining+"|"*p_health+"( vs )"+"|"*e_health+" "*e_remaining+"(100% |")
+                else:
+                    print("| 100%)"+" "*p_remaining+"|"*p_health+"( vs )"+"|"*e_health+" "*e_remaining+"( "+e_hp_percent+"% |")
+            elif e_hp_percent == '100':
+                print("| "+p_hp_percent+"% )"+" "*p_remaining+"|"*p_health+"( vs )"+"|"*e_health+" "*e_remaining+"(100% |")
+            else:
+                print("| "+p_hp_percent+"% )"+" "*p_remaining+"|"*p_health+"( vs )"+"|"*e_health+" "*e_remaining+"( "+e_hp_percent+"% |")
             print("|     \\"+" "*p_remaining+"|"*p_health+"/    \\"+"|"*e_health+" "*e_remaining+"/     |")
             print("|" + " " * spaces_in_between + "|")
             print("| 1) Attack                            |")  # Commands
