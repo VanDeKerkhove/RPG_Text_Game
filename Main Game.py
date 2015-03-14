@@ -26,8 +26,10 @@ class Monster():
         damage = self.attack - target.defense
         if target.health - damage < 0:
             target.health = 0
+            print(" The enemy hit you for "+str(player.health)+ " damage")
         elif damage >= 0:
             target.health -= damage
+            print(" The enemy hit you for "+str(damage)+ " damage")
 
 
 class Player():
@@ -47,8 +49,10 @@ class Player():
         damage = self.attack - target.defense
         if target.health - damage < 0:
             target.health = 0
+            print(" You hit the enemy for "+str(enemy.health)+ " damage")
         elif damage >= 0:
             target.health -= damage
+            print(" You hit the enemy for "+str(damage)+ " damage")
         '''elif damage < 0:
             print('attack=' + str(player.attack))
             print('enemy defense=' + str(enemy.defense))
