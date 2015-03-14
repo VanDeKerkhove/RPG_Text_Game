@@ -134,52 +134,68 @@ def get_stats():
     input()
 
 
-def attack_main():
-    if player.speed > enemy.speed:  # Player is faster
-        player.attack_enemy(enemy)
-        if check_death() is 'enemy':  # .                        Enemy dies
-            player_win()  # Win Screen
-            gain_exp(enemy.level)  # EXP Gain
-            game_state_outer = 2
-            player.health = player.max_health  # Reset Health
-        elif check_death() is 'none':  # .                        No one dies
-            enemy.attack_player(player)
-            if check_death() is 'player':  # .                             Player dies
-                enemy_win()
-                game_state_outer = 2
-                player.health = player.max_health
-            elif check_death() is "enemy":  # .                            Enemy dies
-                player_win()  # Win Screen
-                gain_exp(enemy.level)  # EXP Gain
-                game_state_outer = 2
-                player.health = player.max_health  # Reset Health
-        elif check_death() is 'player':  # .                      Player dies
-            enemy_win()
-            game_state_outer = 2
-            player.health = player.max_health
-    elif player.speed < enemy.speed:
+def attack_p_1():
+    global game_state_outer
+    player.attack_enemy(enemy)
+    if check_death() is 'enemy':  # .                        Enemy dies
+        player_win()  # Win Screen
+        gain_exp(enemy.level)  # EXP Gain
+        game_state_outer = 2
+        player.health = player.max_health  # Reset Health
+    elif check_death() is 'none':  # .                        No one dies
         enemy.attack_player(player)
-        if check_death() is 'player':
+        if check_death() is 'player':  # .                             Player dies
             enemy_win()
             game_state_outer = 2
             player.health = player.max_health
-        elif check_death() is 'none':
-            player.attack_enemy(enemy)
-            if check_death() is 'enemy':
-                player_win()  # Win Screen
-                gain_exp(enemy.level)  # EXP Gain
-                game_state_outer = 2
-                player.health = player.max_health  # Reset Health
-            elif check_death() is 'player':
-                enemy_win()
-                game_state_outer = 2
-                player.health = player.max_health
-        elif check_death() is 'enemy':
+        elif check_death() is "enemy":  # .                            Enemy dies
             player_win()  # Win Screen
             gain_exp(enemy.level)  # EXP Gain
             game_state_outer = 2
             player.health = player.max_health  # Reset Health
+    elif check_death() is 'player':  # .                      Player dies
+        enemy_win()
+        game_state_outer = 2
+        player.health = player.max_health
 
+
+def attack_e_1():
+    global game_state_outer
+    enemy.attack_player(player)
+    if check_death() is 'player':
+        enemy_win()
+        game_state_outer = 2
+        player.health = player.max_health
+    elif check_death() is 'none':
+        player.attack_enemy(enemy)
+        if check_death() is 'enemy':
+            player_win()  # Win Screen
+            gain_exp(enemy.level)  # EXP Gain
+            game_state_outer = 2
+            player.health = player.max_health  # Reset Health
+        elif check_death() is 'player':
+            enemy_win()
+            game_state_outer = 2
+            player.health = player.max_health
+    elif check_death() is 'enemy':
+        player_win()  # Win Screen
+        gain_exp(enemy.level)  # EXP Gain
+        game_state_outer = 2
+        player.health = player.max_health  # Reset Health
+
+
+def attack_main():
+    global game_state_outer
+    if player.speed > enemy.speed:  # Player is faster
+        attack_p_1()
+    elif player.speed < enemy.speed:
+        attack_e_1()
+    else:
+        x = randint(0,1)
+        if x == 0:
+            attack_p_1()
+        elif x == 0:
+            attack_e_1()
 
 def show_menu(game_state):
     while True:
@@ -274,18 +290,7 @@ while True:
     option = show_menu(game_state_outer)
     if game_state_outer == 1:  # In a Fight
         if option == 1:  # Attack
-            player.attack_enemy(enemy)
-            if check_death() is 'enemy':
-                player_win()  # Win Screen
-                gain_exp(enemy.level)  # EXP Gain
-                game_state_outer = 2
-                player.health = player.max_health  # Reset Health
-            elif check_death() is 'none':
-                enemy.attack_player(player)
-                if check_death() is 'player':
-                    enemy_win()
-                    game_state_outer = 2
-                    player.health = player.max_health
+            attack_main()
         if option == 2:  # Escape
             game_state_outer = 2
     elif game_state_outer == 2:  # Menu
