@@ -1,65 +1,12 @@
 __author__ = 'Austin'
-from random import *
+from random import randint
 from math import trunc
 import RPG_Game_Classes as Rpg_Classes
 
 list_of_names = ["Evil Cat", " Sneaky Mouse", "Mad Rat", "Flying Hat", "Mean Bumblebee", "Slow Slug", "Slimy Snail",
                  "Traffic Cone", "Tall Walrus", "Wiggly Noodles", "Angry Waffle"]
-# player = ""
-# enemy = ""
 LENGTH_OF_SCREEN = 40
 game_state_outer = 2
-
-'''
-class Monster():
-    def __init__(self, name, level):
-        self.name = name
-        self.level = level
-        self.attack = level + randint(0, level)
-        self.defense = level + randint(0, level)
-        self.health = level + randint(0, level)
-        self.max_health = self.health
-        self.speed = level + randint(0, level)
-        self.exp = level + randint(0, level)
-        self.gold = level + randint(0, level)
-
-    def attack_player(self, target=player):
-        damage = self.attack - target.defense
-        if target.health - damage < 0:
-            target.health = 0
-            print(" The enemy hit you for "+str(player.health) + " damage")
-        elif damage >= 0:
-            target.health -= damage
-            print(" The enemy hit you for "+str(damage) + " damage")
-
-
-class Player():
-    def __init__(self, name, level=1):
-        self.name = name
-        self.level = level
-        self.attack = level + 1
-        self.defense = level + 1
-        self.health = level + 1
-        self.max_health = self.health
-        self.speed = level + 1
-        self.exp = 0
-        self.gold = 0
-        self.max_exp = level
-
-    def attack_enemy(self, target=enemy):
-        damage = self.attack - target.defense
-        if target.health - damage < 0:
-            target.health = 0
-            print(" You hit the enemy for "+str(enemy.health) + " damage")
-        elif damage >= 0:
-            target.health -= damage
-            print(" You hit the enemy for "+str(damage) + " damage")
-        elif damage < 0:
-            print('attack=' + str(player.attack))
-            print('enemy defense=' + str(enemy.defense))
-            print('enemy level=' + str(enemy.level))
-            print('player level=' + str(player.level))
-'''
 
 
 def check_death():
@@ -200,7 +147,7 @@ def attack_main():
         x = randint(0, 1)
         if x == 0:
             attack_p_1()
-        elif x == 0:
+        elif x == 1:
             attack_e_1()
 
 
@@ -286,7 +233,7 @@ def show_menu(game_state):
 
 #  Main Game
 def main():
-    global game_state_outer
+    global game_state_outer, player, enemy
     while True:
         print("")
         print("What's your name?")
@@ -301,15 +248,15 @@ def main():
         if game_state_outer == 1:  # In a Fight
             if option == 1:  # Attack
                 attack_main()
-            if option == 2:  # Escape
+            elif option == 2:  # Escape
                 game_state_outer = 2
         elif game_state_outer == 2:  # Menu
             if option == 1:  # Fight
                 enemy = Rpg_Classes.Monster(list_of_names[randint(0, (len(list_of_names)-1))], 1)
                 game_state_outer = 1
-            if option == 2:  # Stats
+            elif option == 2:  # Stats
                 get_stats()
-            if option == 3:
+            elif option == 3:
                 game_state_outer = 3  # Quit
 
 if __name__ == '__main__':

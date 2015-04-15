@@ -1,5 +1,5 @@
 __author__ = 'Austin'
-from random import *
+from random import randint
 
 
 class Monster():
@@ -14,11 +14,11 @@ class Monster():
         self.exp = level + randint(0, level)
         self.gold = level + randint(0, level)
 
-    def attack_player(self, target=player):
+    def attack_player(self, target):
         damage = self.attack - target.defense
         if target.health - damage < 0:
+            print(" The enemy hit you for {} damage".format(target.health))
             target.health = 0
-            print(" The enemy hit you for {} damage".format(player.health))
         elif damage >= 0:
             target.health -= damage
             print(" The enemy hit you for {} damage".format(damage))
@@ -37,11 +37,11 @@ class Player():
         self.gold = 0
         self.max_exp = level
 
-    def attack_enemy(self, target=enemy):
+    def attack_enemy(self, target):
         damage = self.attack - target.defense
         if target.health - damage < 0:
+            print(" You hit the enemy for {} damage".format(target.health))
             target.health = 0
-            print(" You hit the enemy for {} damage".format(enemy.health))
         elif damage >= 0:
             target.health -= damage
             print(" You hit the enemy for {} damage".format(damage))
@@ -53,8 +53,7 @@ class Player():
 
 
 def main():
-    player = ''
-    enemy = ''
+    print("hi")
 
 
 if __name__ == '__main__':
