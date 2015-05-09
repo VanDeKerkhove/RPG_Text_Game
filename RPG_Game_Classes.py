@@ -3,6 +3,7 @@ from random import randint
 
 
 class Monster():
+    """Class for all enemies in the game"""
     def __init__(self, name, level):
         self.name = name
         self.level = level
@@ -14,7 +15,8 @@ class Monster():
         self.exp = level + randint(0, level)
         self.gold = level + randint(0, level)
 
-    def attack_player(self, target):
+    def fight(self, target):
+        """Controls the actual fighting between enemy and player"""
         damage = self.attack - target.defense
         if target.health - damage < 0:
             print(" The enemy hit you for {} damage".format(target.health))
@@ -22,9 +24,12 @@ class Monster():
         elif damage >= 0:
             target.health -= damage
             print(" The enemy hit you for {} damage".format(damage))
+        else:
+            print(" The enemy hit you for 0 damage")
 
 
 class Player():
+    """This is the player is stores the stats"""
     def __init__(self, name, level=1):
         self.name = name
         self.level = level
@@ -36,8 +41,10 @@ class Player():
         self.exp = 0
         self.gold = 0
         self.max_exp = level
+        self.items = {}
 
-    def attack_enemy(self, target):
+    def fight(self, target):
+        """Controls the actual fighting between player and enemy"""
         damage = self.attack - target.defense
         if target.health - damage < 0:
             print(" You hit the enemy for {} damage".format(target.health))
@@ -45,14 +52,12 @@ class Player():
         elif damage >= 0:
             target.health -= damage
             print(" You hit the enemy for {} damage".format(damage))
-        '''elif damage < 0:
-            print('attack=' + str(player.attack))
-            print('enemy defense=' + str(enemy.defense))
-            print('enemy level=' + str(enemy.level))
-            print('player level=' + str(player.level))'''
+        else:
+            print(" You hit the enemy for 0 damage")
 
 
 def main():
+    """"Shout out to testing"""
     print("hi")
 
 
