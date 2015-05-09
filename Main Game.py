@@ -239,18 +239,32 @@ def show_menu(game_state):
         spaces_in_between = LENGTH_OF_SCREEN - 2
         if game_state == 1:
             num_e_spaces = (14 - len(enemy.name))/2  # enemy
+<<<<<<< HEAD
             num_e_spaces2 = num_e_spaces
             if num_e_spaces % 1 != 0:  # odd
+=======
+            if (len(enemy.name) % 2 != 0): #odd
+>>>>>>> origin/master
                 num_e_spaces = trunc(num_e_spaces)
                 num_e_spaces2 = num_e_spaces + 1
+            else:
+                num_e_spaces = trunc(num_e_spaces)
+                num_e_spaces2 = num_e_spaces
             num_e_spaces = int(num_e_spaces)
             num_e_spaces2 = int(num_e_spaces2)
 
             num_p_spaces = (14 - len(player.name))/2  # player
+<<<<<<< HEAD
             num_p_spaces2 = num_p_spaces
             if num_p_spaces % 1 != 0:  # odd
+=======
+            if (len(player.name) % 2 != 0): #odd
+>>>>>>> origin/master
                 num_p_spaces = trunc(num_p_spaces)
                 num_p_spaces2 = num_p_spaces + 1
+            else:
+                num_p_spaces = trunc(num_p_spaces)
+                num_p_spaces2 = num_p_spaces
             num_p_spaces = int(num_p_spaces)
             num_p_spaces2 = int(num_p_spaces2)
 
