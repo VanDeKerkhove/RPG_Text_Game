@@ -3,7 +3,7 @@ from random import randint
 from math import trunc
 import RPG_Game_Classes as Rpg_Classes
 
-# TODO: GUI, get potion to work, actual levels, enemy level up, random events.
+# TODO: GUI,, actual levels, random events.
 list_of_names = ["Evil Cat", " Sneaky Mouse", "Mad Rat", "Flying Hat", "Mean Bumblebee", "Slow Slug", "Slimy Snail",
                  "Traffic Cone", "Tall Walrus", "Wiggly Noodles", "Angry Waffle"]
 LENGTH_OF_SCREEN = 40
@@ -113,22 +113,23 @@ def attack(first):
             game_state_outer = 2
             player.health = player.max_health
         elif check_death() is 'none':
-            player.fight(enemy)
-            if check_death() is 'enemy':
-                player_win()  # Win Screen
-                gain(enemy.level, enemy.level)  # EXP Gain
-                game_state_outer = 2
-                player.health = player.max_health  # Reset Health
-            elif check_death() is 'player':
-                enemy_win()
-                game_state_outer = 2
-                player.health = player.max_health
+            if player.dangerous:  # If player can attack
+                player.fight(enemy)
+                if check_death() is 'enemy':
+                    player_win()  # Win Screen
+                    gain(enemy.level, enemy.level)  # EXP Gain
+                    game_state_outer = 2
+                    player.health = player.max_health  # Reset Health
+                elif check_death() is 'player':
+                    enemy_win()
+                    game_state_outer = 2
+                    player.health = player.max_health
         elif check_death() is 'enemy':
             player_win()  # Win Screen
             gain(enemy.level, enemy.level)  # EXP Gain
             game_state_outer = 2
             player.health = player.max_health  # Reset Health
-    elif first is player:
+    elif (first is player) and player.dangerous:
         player.fight(enemy)
         if check_death() is 'enemy':  # .                        Enemy dies
             player_win()  # Win Screen
@@ -170,7 +171,7 @@ def attack_main():
 def shop():
     """Controls the shop where the player buys items"""
     global game_state_outer
-    options = {"?": "Type a number with a \"?\" after it for more info",
+    options = {"?": 'Type a number with a "?" after it for more info',
                "1?": "Restores health equal to your level",
                "2?": "Gives you +1 attack", "3?": "Gives you +1 defense",
                "4?": "Gives you +1 health", "5?": "Gives you +1 speed",
@@ -188,7 +189,7 @@ def shop():
 
         print("")
         print("-" * LENGTH_OF_SCREEN)
-        print("| For help, type \"?\", Then press enter |")
+        print('| For help, type "?", Then press enter |')
         print("|         Item        |      Cost      |")
         print("|     1) Potion       |        8       |")
         print("|     2) Sword        |       10       |")
@@ -205,11 +206,12 @@ def shop():
             if choice1 in options.keys():
                 not_valid = False
             if not_valid:
-                print('Please enter \"' + ("\", \"".join(options_str)) + "\"")  # list of sorted strings
+                print('Please enter "' + ('", "'.join(options_str)) + '"')  # list of sorted strings
 
         if choice1.isnumeric() and choice1 != "7":
             item = options[choice1][1]
             if player.gold >= int(options[choice1][0]):  # Increment if in inventory, set to 1 if not in inventory
+                player.gold -= int(options[choice1][0])
                 if item == 'sword':  # Increment Stats
                     player.attack += 1
                 elif item == 'shield':
@@ -278,16 +280,32 @@ def show_menu(game_state):
                 print("| "+p_hp_percent+"% )"+" "*p_remaining+"|"*p_health+"( vs )"+"|"*e_health+" "*e_remaining+"( "+e_hp_percent+"% |")
             print("|     \\"+" "*p_remaining+"|"*p_health+"/    \\"+"|"*e_health+" "*e_remaining+"/     |")
             print("|" + " " * spaces_in_between + "|")
-            print("| 1) Attack                            |")  # Commands
-            print("| 2) Escape                            |")  # Commands
+            print("| 1) Attack      2) Use Potion         |")  # Commands
+            print("| 3) Escape                            |")  # Commands
             print("|" + " " * spaces_in_between + "|")
             print("-" * LENGTH_OF_SCREEN)
 
             while True:
                 choice1 = input()
-                if (choice1.isnumeric() is True) and (1 <= int(choice1) <= 2):
-                    return int(choice1)
-                print('Please enter "1" or "2" ')
+                if (choice1.isnumeric() is True) and (1 <= int(choice1) <= 3):  # valid choice
+                    if choice1 != '2':  # Doesn't want to use a potion
+                        return int(choice1)
+                    elif (choice1 == '2') and ('potion' in player.items):  # Potion AND player has a potion in inventory
+                        if player.health < player.max_health:  # Not max health
+                            player.items['potion'] -= 1
+                            deficit = player.max_health - player.health
+                            print('you have healed for {} health points!'.format(deficit))
+                            if (player.health + player.level) > player.max_health:  # Over max health
+                                player.health = player.max_health
+                            else:
+                                player.health += player.level  # Heals player
+                            return int(choice1)
+                        else:
+                            print("You are max health, don't use a potion now...")
+                    else:
+                        print("You don't have any potions left!")
+                else:
+                    print('Please enter "1", "2", or "3" ')
 
         elif game_state == 2:
             print("")
@@ -328,15 +346,23 @@ def main():
         print("")
         print("Less than 16 characters please")
     while True:
+        player.dangerous = True
         option = show_menu(game_state_outer)
         if game_state_outer == 1:  # In a Fight
             if option == 1:  # Attack
                 attack_main()
-            elif option == 2:  # Escape
+            if option == 2:  # Potion used, player doesnt fight back
+                player.dangerous = False
+                attack_main()
+            elif option == 3:  # Escape
                 game_state_outer = 2
         elif game_state_outer == 2:  # Menu
             if option == 1:  # Fight
-                enemy = Rpg_Classes.Monster(list_of_names[randint(0, (len(list_of_names)-1))], 1)
+                if player.level == 1:  # Scale enemy level
+                    enemy_level = 1
+                else:
+                    enemy_level = player.level - 1
+                enemy = Rpg_Classes.Monster(list_of_names[randint(0, (len(list_of_names)-1))], enemy_level)
                 game_state_outer = 1
             elif option == 2:  # Shop
                 game_state_outer = 3

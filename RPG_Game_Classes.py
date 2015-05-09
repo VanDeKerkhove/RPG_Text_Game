@@ -14,6 +14,7 @@ class Monster():
         self.speed = level + randint(0, level)
         self.exp = level + randint(0, level)
         self.gold = level + randint(0, level)
+        self.dangerous = True
 
     def fight(self, target):
         """Controls the actual fighting between enemy and player"""
@@ -42,6 +43,7 @@ class Player():
         self.gold = 0
         self.max_exp = level
         self.items = {}
+        self.dangerous = True
 
     def fight(self, target):
         """Controls the actual fighting between player and enemy"""
